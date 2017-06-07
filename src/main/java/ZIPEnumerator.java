@@ -1,5 +1,10 @@
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by andrewwong on 6/7/17.
@@ -13,11 +18,28 @@ public class ZIPEnumerator {
     }
 
     public List<Path> listAllZipFiles() {
-        return null;
+        try {
+            return Files.walk(this.directory).filter(p -> getFileExtension(p.toFile())==".zip").collect(Collectors.toCollection(ArrayList::new));
+        } catch (IOException ioe) {
+            return null;
+        }
     }
 
-    public List<Path> listAllFiles() {
-        return null;
+    private String getFileExtension(File file) {
+        String name = file.getName();
+        try {
+            return name.substring(name.lastIndexOf(".") + 1);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public List<String> listAllFiles() {
+        try {
+            return Files.walk(this.directory).map(p -> p.toString()).collect(Collectors.toCollection(ArrayList::new));
+        } catch (IOException ioe) {
+            return null;
+        }
     }
 
     public void addFileToZip(Path zipArchive) {
